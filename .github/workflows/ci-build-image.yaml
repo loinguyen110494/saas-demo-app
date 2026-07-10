@@ -71,4 +71,5 @@ jobs:
           git config user.email "github-actions@github.com"
           git add "${GITOPS_PATH}"
           git commit -m "Update saas-demo-app image to ${{ steps.vars.outputs.short_sha }}" || echo "No changes to commit"
-          git push
+          git remote set-url origin "https://x-access-token:${{ secrets.GITOPS_TOKEN }}@github.com/${GITOPS_REPO}.git"
+          git push origin main

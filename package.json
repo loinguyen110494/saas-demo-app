@@ -1,0 +1,13 @@
+{
+  "name": "saas-demo-app",
+  "version": "1.0.0",
+  "description": "Demo SaaS app for Kubernetes GitOps CI/CD lab",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node -e \"console.log('tests passed')\""
+  },
+  "dependencies": {
+    "express": "4.19.2"
+  }
+}

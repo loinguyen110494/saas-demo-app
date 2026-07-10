@@ -12,6 +12,8 @@ permissions:
 
 env:
   IMAGE_NAME: ghcr.io/loinguyen110494/saas-demo-app
+  GITOPS_REPO: loinguyen110494/saas-demo-gitops
+  GITOPS_PATH: apps/saas-demo-app/overlays/tenant-a/kustomization.yaml
 
 jobs:
   build:
@@ -53,3 +55,20 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.short_sha }}
             ${{ env.IMAGE_NAME }}:latest
+
+      - name: Checkout GitOps repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.GITOPS_REPO }}
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: gitops
+
+      - name: Update image tag in GitOps repo
+        working-directory: gitops
+        run: |
+          sed -i "s/newTag: .*/newTag: ${{ steps.vars.outputs.short_sha }}/" "${GITOPS_PATH}"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add "${GITOPS_PATH}"
+          git commit -m "Update saas-demo-app image to ${{ steps.vars.outputs.short_sha }}" || echo "No changes to commit"
+          git push
